@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SpaceGameUser;
 using SpaceGameShip;
-
+using SpaceGameRoom;
 namespace SpaceGame
 {
     public class SpaceGame : Form
@@ -25,19 +25,19 @@ namespace SpaceGame
         public SpaceGame()
         {
             // Set up the form
-            this.Text = "Space Game";
-            this.ClientSize = new System.Drawing.Size(400, 400); // Square size
-            this.BackColor = System.Drawing.Color.Black;
+            // this.Text = "Space Game";
+            // this.ClientSize = new System.Drawing.Size(400, 400); // Square size
+            // this.BackColor = System.Drawing.Color.Black;
 
-            displayLabel = new Label();
-            displayLabel.Text = "I am on this screen";
-            displayLabel.ForeColor = System.Drawing.Color.White;
-            displayLabel.AutoSize = true;
-            displayLabel.Location = new System.Drawing.Point(150, 180); // Center the text
-            this.Controls.Add(displayLabel);
+            // displayLabel = new Label();
+            // displayLabel.Text = "I am on this screen";
+            // displayLabel.ForeColor = System.Drawing.Color.White;
+            // displayLabel.AutoSize = true;
+            // displayLabel.Location = new System.Drawing.Point(150, 180); // Center the text
+            // this.Controls.Add(displayLabel);
 
             // Start the game logic
-            // StartNewGame();
+            StartNewGame();
         }
 
         [STAThread]

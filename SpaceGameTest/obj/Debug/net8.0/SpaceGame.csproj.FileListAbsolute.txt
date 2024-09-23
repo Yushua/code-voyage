@@ -1,0 +1,5 @@
+C:\Users\flipy\OneDrive\Documents\GitHub\portfolio\code-voyage\SpaceGameTest\obj\Debug\net8.0\SpaceGame.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\flipy\OneDrive\Documents\GitHub\portfolio\code-voyage\SpaceGameTest\obj\Debug\net8.0\SpaceGame.AssemblyInfoInputs.cache
+C:\Users\flipy\OneDrive\Documents\GitHub\portfolio\code-voyage\SpaceGameTest\obj\Debug\net8.0\SpaceGame.AssemblyInfo.cs
+C:\Users\flipy\OneDrive\Documents\GitHub\portfolio\code-voyage\SpaceGameTest\obj\Debug\net8.0\SpaceGame.csproj.CoreCompileInputs.cache
+C:\Users\flipy\OneDrive\Documents\GitHub\portfolio\code-voyage\SpaceGameTest\obj\Debug\net8.0\SpaceGame.sourcelink.json
