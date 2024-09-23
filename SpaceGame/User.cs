@@ -91,7 +91,7 @@ namespace SpaceGameUser
                     // Check if we can add another cook based on crew size
                     if (cookCount < (numberOfCrew + 4) / 5) // Allows for 1 cook per 5 crew members
                     {
-                        Title = "Cook";
+                        Title = "Cook Member";
                         Rank = 4;
                         cookCount++; // Increment cook count
                     }
