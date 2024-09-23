@@ -98,23 +98,87 @@ function, their proffession requires X space
 
 year only has 365 days;
 
-the User {
-    string name;
-    string last name
-    string rank
-    string proffession;
-    int health
-    int stamina
-    string place of origin
-    string space needed
-    string birthday
-    string combat style
-    int speed
-    int happiness
-    int hunger
-    int location user;
-    string age in days
-    int location sleep;
-    int location work;
+Rooms:
 
-}
+thye are important. they have a limit. so many people. and a person has needs.
+
+a ship can have more crew and more space. this is not a real thing so rooms can be added to the ship with resources. once the moving is done
+
+
+so for the next phace this needs to happen.
+
+1. rooms need to have the minimum need given
+2. rooms have statuses. besides sleeping quarters. they need to be of use
+3. rooms with use give buffs. so during situations those buffs are all included
+4. assign crew to a room
+5. see all the rooms
+6. see all the crew
+
+when assigning. a system in place to place the crew there and see the buffs
+
+the next phace, planets.
+
+this is easy, one needs to create a grid of maybe 10000 by 10000. on this
+there are systems. in this phave there is nothing but a random amount of planets with only names
+
+the thing is, to fly to such a system. this means an action
+
+1. one can see all the systems
+2. each system shows three things "resources, habitable, name"
+3. create the planets for each system
+4. set the location for each system
+5. set the location for each planet in the system
+
+the next phace
+
+have the optin like assigning the crew. to set course towards a planet
+1. have a screen that shows the system information. so how many planets, the names. habitable, etc
+2. then one can choose the planet. this is not important. one does not need to choose
+3. once confirmed. one sees the time like usual and the distance still needed to travel and how long it takes.
+
+next phace fuel
+each ship has fuel. its stored. this is a bit of math, but one needs to have enough fuel.
+when creating a ship, the amount of fuel in finite. meaning just that max. the point is to use it well.
+the ship has several speeds.
+1. that uses no fuel, slow
+2. medium speed, low fuel cost. normal
+3. high speed. high use. but quicker there
+
+when planning a planet.
+1. it tells you how much fuel it will cost for each one.
+2. how long it will take
+
+for now its alright if one cannot reach a planet, just that the info is correct. one always starts at a planet that has
+some resources to take hold off. the point is the information on the screen. we go from a simple temrinal based
+maybe now to a more updated phace. still the information. but better.
+
+later phaces
+- gathering resources
+- using resources
+- gathering new crew
+- sending away crew on missions
+- events while traveling
+- ships health
+- repairing
+- upgrades
+- training
+
+on missions. one can send someone out. there can be two types
+1. the ship is send away and the ship waits.
+2. the ship is send away as is the mission ship. they return when back.
+the second one is trickerier. one can think the mission is successful and reutnr. but if it fails
+then the ship can send out a distress. if chances are correct. the ship either gets it or not.
+
+ships health: this is tricky. the important part is, is that there are two healths. the cmpartments. so the rooms. and the hull.
+right now I have the rooms. not the hull. so there needs to be a calucaltion or even a creation where they are.
+also a shield for the ship.
+
+however this is not important for now. its diplomacy and flying and gathering enough resources. how far do you want to go
+how long do you want to stay? you are not forced to move and go. you can stay gather, upgrade.
+
+crewmembers can get training during travels. this si where the job time is in. during their free time. they have the option
+to have some free time, or be assigned training. this gives exp to increase that proffessions skill. if hit. they can do a test
+if successfull, they get that proffession. doing work on that proffesion also gives exp. training is important if you want
+to be a captain. one needs all the proffessons.
+
+if enough is met. one can do a captains training. if successfull, hey can take over as captain if the captain dies.
