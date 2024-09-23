@@ -95,3 +95,26 @@ there are three types of rooms
 while entertainments can be increased (so much space per person. if its lower, they get unhappy)
 sleep for each perosn and their needs
 function, their proffession requires X space
+
+year only has 365 days;
+
+the User {
+    string name;
+    string last name
+    string rank
+    string proffession;
+    int health
+    int stamina
+    string place of origin
+    string space needed
+    string birthday
+    string combat style
+    int speed
+    int happiness
+    int hunger
+    int location user;
+    string age in days
+    int location sleep;
+    int location work;
+
+}
