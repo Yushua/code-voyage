@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
-using SpaceGameNamespace;
+using System.Collections.Generic;
+using SpaceGameUser;
+using SpaceGameShip;
+
 class SpaceGame
 {
-    static readonly int RealTimeStep = 2000; // in milliseconds (1 second)
+    static readonly int RealTimeStep = 2000; // in milliseconds (10 seconds)
     static int GameTimeStep = 10; // Each step represents 10 minutes of game time.
     static int gameTimeStep = 0;
 
@@ -17,16 +20,19 @@ class SpaceGame
     static void Main()
     {
         Console.WriteLine("---Starting game loop---");
+        Console.WriteLine("---create ship---");
+        Ship ship = new Ship("SS Voyager", 10); // Create the ship with crew size
         Console.WriteLine("---create users---");
-        List<User> users = createCharacters(5);
+        List<User> users = createCharacters(10, ship);
         Console.WriteLine("---finished creating---");
+        
         while (true)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             try
             {
-                ProcessGameTick();
+                ProcessGameTick(users, ship); // Pass the ship here
                 FTProcessGameTick(stopwatch);
             }
             catch (Exception ex)
@@ -36,47 +42,111 @@ class SpaceGame
 
             // Update game time step
             gameTimeStep++;
-            
-            // Call the function to update and display the current game time
             UpdateAndDisplayGameTime();
         }
     }
 
-    static List<User> createCharacters(int numberOfUsers){
+    static List<User> createCharacters(int numberOfCrew, Ship ship)
+    {
         List<User> users = new List<User>();
+        int roomIndex = 0; // Start from the first crew room
 
-        // Generate users
-        for (int i = 0; i < numberOfUsers; i++)
+        for (int i = 0; i < numberOfCrew; i++)
         {
-            // Generate a random name for each user (can be improved)
             string name = $"UserFirstName{i}";
             string lastName = $"UserLastName{i}";
 
-            User newUser = new User(name, lastName);
+            // Allocate a unique room number for the user
+            Room userRoom = ship.Rooms[roomIndex++];
+            User newUser = new User(name, lastName, numberOfCrew, userRoom.RoomNumber);
+
+            // Set work location based on title
+            switch (newUser.Title)
+            {
+                case "Captain":
+                case "Head Engineer":
+                case "Head Scientist":
+                    newUser.SetWorkLocation(ship.HeadRoom.RoomNumber); // Head room for captain and heads
+                    break;
+                case "Cook":
+                    newUser.SetWorkLocation(ship.Kitchen.RoomNumber); // Kitchen for cooks
+                    break;
+                default:
+                    newUser.SetWorkLocation(userRoom.RoomNumber); // Default to their own room for now
+                    break;
+            }
+
             users.Add(newUser);
         }
 
-        // Display all users' information
         foreach (User user in users)
         {
             user.DisplayUserInfo();
         }
         return users;
     }
-    // Game logic processing (everything that happens each 'tick')
-    static void ProcessGameTick()
-    {
-        // Console.WriteLine($"Game time advances by {GameTimeStep} minutes.");
 
-        // Example of workload that may vary
-        Random random = new Random();
-        int workDuration = random.Next(500, 1500); // Random workload between 500ms and 1500ms
-        Thread.Sleep(workDuration); // Simulate work that takes time (replace this with actual logic)
+    static void ProcessGameTick(List<User> users, Ship ship)
+    {   
+        ship.PrintRoomLocations();
+        Console.WriteLine($"{"Name",-20} {"LastName",-20} {"Title",-15} {"Health",5} {"Stamina",7} {"Hunger",7} {"SleepLevel",12} {"CurrentLocation",15} {"status",13}");
+        
+        foreach (var user in users)
+        {
+            // Check for eating or sleeping conditions
+            if (user.Hunger > 70 && user.Status != "Eating" && user.Status != "Sleeping")
+            {
+                user.CurrentLocation = ship.Canteen.RoomNumber;
+                user.ChangeStatus("Eating");
+            }
+            else if (user.SleepLevel < 20 && user.Status != "Sleeping" && user.Status != "Eating")
+            {
+                user.CurrentLocation = user.CurrentLocation; // Return to own quarters
+                user.ChangeStatus("Sleeping");
+            }
+            else
+            {
+                // Go to work if not eating or sleeping
+                user.CurrentLocation = user.WorkLocation;
+                user.ChangeStatus("Working");
+            }
 
-        // Console.WriteLine($"Work took {workDuration}ms.");
+            // Handle eating
+            if (user.Status == "Eating")
+            {
+                user.Eat();
+                user.DecreaseSleep(); // Even while eating, decrease sleep
+                
+                if (user.Hunger <= 0)
+                {
+                    user.ChangeStatus("Working");
+                    user.CurrentLocation = user.WorkLocation; // Return to work location
+                }
+                user.DisplayUserInfo();
+            }
+            // Handle sleeping
+            else if (user.Status == "Sleeping")
+            {
+                user.Sleep();
+                user.DecreaseHunger(); // Even while sleeping, decrease hunger
+                
+                if (user.SleepLevel >= 100)
+                {
+                    user.ChangeStatus("Working");
+                    user.CurrentLocation = user.WorkLocation; // Return to work location
+                }
+                user.DisplayUserInfo();
+            }
+            // Default working status
+            else if (user.Status == "Working")
+            {
+                user.DecreaseHunger();
+                user.DecreaseSleep();
+                user.DisplayUserInfo();
+            }
+        }
     }
 
-    // Function that processes the time step
     static void FTProcessGameTick(Stopwatch stopwatch)
     {
         stopwatch.Stop();
@@ -87,13 +157,10 @@ class SpaceGame
         }
     }
 
-    // Function to update and display the game time
     static void UpdateAndDisplayGameTime()
     {
-        // Update the minutes based on GameTimeStep
         minute += GameTimeStep;
 
-        // Handle the overflow for minutes, hours, days, and months
         if (minute >= 60)
         {
             minute = 0;
@@ -104,7 +171,7 @@ class SpaceGame
             hour = 0;
             day++;
         }
-        if (day >= 30) // Assuming 30 days in a month for simplicity
+        if (day >= 30)
         {
             day = 0;
             month++;
@@ -115,7 +182,6 @@ class SpaceGame
             year++;
         }
 
-        // Print out the updated game time
         Console.WriteLine($"Year: {year}, Month: {month}, Day: {day}, Hour: {hour}, Minute: {minute}");
     }
 }

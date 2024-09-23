@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SpaceGame")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+30745331321832966ab47bc36898044b671effd3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a00adfb868b4d5acf6d2d1ec8492c7a365356d8a")]
 [assembly: System.Reflection.AssemblyProductAttribute("SpaceGame")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SpaceGame")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 
-namespace SpaceGameNamespace
+namespace SpaceGameUser
 {
     public class User
     {
         public string Name { get; private set; }
         public string LastName { get; private set; }
-        public string Title { get; private set; }
+        public string Title { get; private set; } = "Crew Member"; // Default value
         public List<string> Professions { get; private set; }
         public int Rank { get; private set; }
         public int Health { get; set; }
@@ -19,108 +19,122 @@ namespace SpaceGameNamespace
         public int Speed { get; set; }
         public int Happiness { get; set; }
         public int Hunger { get; set; }
-        public int LocationUser { get; set; }
-        public string AgeInDays { get; set; }
-        public int LocationSleep { get; set; }
-        public int LocationWork { get; set; }
+        public int SleepLevel { get; set; } // Assume SleepLevel is from 0 to 100
+        public int CurrentLocation { get; set; } // Room Number
+        public int HungerDecreaser { get; private set; }
+        public int SleepDecreaser { get; private set; }
+        public string Status { get; private set; }
+        public int WorkLocation { get; private set; } // Work location (e.g., Engineering)
 
-        // Static counters for unique titles
         private static int captainCount = 0;
         private static int headScientistCount = 0;
         private static int headEngineerCount = 0;
         private static int cookCount = 0;
-
         private static Random random = new Random();
 
-        public User(string name, string lastName)
+        public User(string name, string lastName, int numberOfCrew, int roomNumber)
         {
             Name = name;
             LastName = lastName;
             Professions = new List<string>();
 
-            AssignTitleAndRank();
+            AssignTitleAndRank(numberOfCrew);
 
             Health = random.Next(50, 101);
             Stamina = random.Next(30, 100);
             PlaceOfOrigin = "Earth";
-            SpaceNeeded = "Standard Cabin";
-            Birthday = GenerateRandomBirthday();
-            CombatStyle = "Unarmed";
-            Speed = random.Next(1, 10);
-            Happiness = random.Next(50, 100);
-            Hunger = random.Next(0, 50);
-            LocationUser = random.Next(0, 10);
-            AgeInDays = "0";
-            LocationSleep = 1;
-            LocationWork = 2;
+            SpaceNeeded = "Small";
+            Birthday = "01-01-2000";
+            CombatStyle = "Balanced";
+            Speed = random.Next(1, 11);
+            Happiness = random.Next(1, 101);
+            Hunger = 0; // Start with no hunger
+            SleepLevel = 100; // Start fully rested
+            CurrentLocation = roomNumber; // Assigned room number
+            WorkLocation = 2; // Default work location (e.g., Engineering)
+            HungerDecreaser = random.Next(1, 5); // Random hunger decrease rate
+            SleepDecreaser = random.Next(1, 3); // Random sleep decrease rate
+            Status = "Working";
         }
 
-        private void AssignTitleAndRank()
+        private void AssignTitleAndRank(int numberOfCrew)
         {
-            // Assign titles and ranks based on existing counts
-            switch (true)
+            // Randomly assign a profession and increment counts
+            int professionRoll = random.Next(1, 5);
+            switch (professionRoll)
             {
-                case bool _ when captainCount == 0:
-                    Title = "Captain";
-                    Rank = 1;
-                    captainCount++;
+                case 1:
+                    if (captainCount == 0)
+                    {
+                        Title = "Captain";
+                        Rank = 1;
+                        captainCount++;
+                    }
                     break;
-
-                case bool _ when headEngineerCount == 0:
-                    Title = "Head Engineer";
-                    Rank = 9;
-                    Professions.Add("Engineer");
-                    headEngineerCount++;
+                case 2:
+                    if (headScientistCount == 0)
+                    {
+                        Title = "Head Scientist";
+                        Rank = 2;
+                        headScientistCount++;
+                    }
                     break;
-
-                case bool _ when headScientistCount == 0:
-                    Title = "Head Scientist";
-                    Rank = 9;
-                    Professions.Add("Scientist");
-                    headScientistCount++;
+                case 3:
+                    if (headEngineerCount == 0)
+                    {
+                        Title = "Head Engineer";
+                        Rank = 3;
+                        headEngineerCount++;
+                    }
                     break;
-
-                case bool _ when cookCount == 0:
-                    Title = "Cook";
-                    Rank = random.Next(2, 10); // Random rank between 2 and 9
-                    cookCount++;
+                case 4:
+                    // Check if we can add another cook based on crew size
+                    if (cookCount < (numberOfCrew + 4) / 5) // Allows for 1 cook per 5 crew members
+                    {
+                        Title = "Cook";
+                        Rank = 4;
+                        cookCount++; // Increment cook count
+                    }
                     break;
-
-                default:
-                    Title = "Crew Member"; // Default title
-                    Rank = random.Next(2, 10); // Random rank
-                    break;
-            }
-
-            // Add random professions if applicable
-            if (Title != "Captain" && Title != "Head Engineer" && Title != "Head Scientist")
-            {
-                if (random.Next(0, 2) == 0) Professions.Add("Pilot");
-                if (random.Next(0, 2) == 0) Professions.Add("Engineer");
-                if (random.Next(0, 2) == 0) Professions.Add("Scientist");
             }
         }
 
-        private string GenerateRandomBirthday()
+        public void ChangeStatus(string newStatus)
         {
-            int year = random.Next(2100, 2200);
-            int month = random.Next(1, 13);
-            int day = random.Next(1, 29);
-            return $"Year {year}, Month {month}, Day {day}";
+            Status = newStatus;
+        }
+
+        public void SetWorkLocation(int roomNumber)
+        {
+            WorkLocation = roomNumber;
+        }
+
+        public void DecreaseHunger()
+        {
+            Hunger += HungerDecreaser;
+        }
+
+        public void DecreaseSleep()
+        {
+            SleepLevel -= SleepDecreaser;
+            if (SleepLevel < 0) SleepLevel = 0; // Avoid negative sleep level
+        }
+
+        public void Eat()
+        {
+            Hunger -= 20;
+            if (Hunger < 0) Hunger = 0;
+        }
+
+        public void Sleep()
+        {
+            SleepLevel += 10; // Assume each sleep increases sleep level
+            if (SleepLevel > 100) SleepLevel = 100; // Max sleep level
         }
 
         public void DisplayUserInfo()
         {
-            Console.WriteLine($"Name: {Name} {LastName}");
-            Console.WriteLine($"Title: {Title}, Rank: {Rank}");
-            Console.WriteLine($"Professions: {string.Join(", ", Professions)}");
-            // Console.WriteLine($"Health: {Health}, Stamina: {Stamina}");
-            // Console.WriteLine($"Place of Origin: {PlaceOfOrigin}, Space Needed: {SpaceNeeded}");
-            // Console.WriteLine($"Birthday: {Birthday}, Combat Style: {CombatStyle}");
-            // Console.WriteLine($"Speed: {Speed}, Happiness: {Happiness}, Hunger: {Hunger}");
-            // Console.WriteLine($"Location (User): {LocationUser}, Age in Days: {AgeInDays}");
-            // Console.WriteLine($"Sleep Location: {LocationSleep}, Work Location: {LocationWork}");
-            Console.WriteLine();
+            Console.WriteLine($"{Name,-20} {LastName,-20} {Title,-15} {Health,5} {Stamina,7} {Hunger,7} {SleepLevel,12} {CurrentLocation,15} {Status,13}");
         }
     }
 }
