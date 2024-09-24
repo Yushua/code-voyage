@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using SpaceGameUser;
 using SpaceGameShip;
 using SpaceGameRoom;
-using SpaceGameSystems;
 
 namespace SpaceGame
 {
@@ -26,7 +25,6 @@ namespace SpaceGame
 
         Ship ship;
         List<User> users;
-        List<SpaceSystem> systems;
 
         public SpaceGame()
         {
@@ -63,11 +61,12 @@ namespace SpaceGame
         {
             Console.WriteLine("---Starting game loop---");
             Console.WriteLine("---create ship---");
-            ship = new Ship("SS Voyager", 10);
+            ship = new Ship("SS Voyager", 10); // Create the ship with crew size
             Console.WriteLine("---create users---");
             users = CreateCharacters(10, ship);
             Console.WriteLine("---finished creating---");
-            systems = CreateSystems(10);
+
+            // Start the game timer after characters are created
             gameTimer.Start();
         }
 
@@ -131,20 +130,6 @@ namespace SpaceGame
         }
 
         return users;
-    }
-
-    List<SpaceSystem> CreateSystems(int systemSize)
-    {
-        List<SpaceSystem> systems = new List<SpaceSystem>();
-
-        for (int i = 0; i < systemSize; i++)
-        {
-            string systemName = $"System-{i + 1}";
-            SpaceSystem newSystem = new SpaceSystem(systemName, 100, 100); // Create each system with a random location on a 100x100 map
-            systems.Add(newSystem);
-        }
-
-        return systems;
     }
 
     void ProcessGameTick(List<User> users, Ship ship)
