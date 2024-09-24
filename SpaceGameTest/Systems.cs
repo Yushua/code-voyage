@@ -58,7 +58,7 @@ namespace SpaceGameSystems
 
         public void DisplayPlanetInfo()
         {
-            Console.WriteLine($"Planet: {name}, Size: {size}, Type: {type}");
+            Console.WriteLine($"Planet: {this.name}, Size: {this.size}, Type: {this.type}");
         }
     }
 
