@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceGame", "SpaceGameTest\SpaceGame.csproj", "{7B487DDE-24A4-4149-8876-A73816277BAA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7B487DDE-24A4-4149-8876-A73816277BAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B487DDE-24A4-4149-8876-A73816277BAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B487DDE-24A4-4149-8876-A73816277BAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B487DDE-24A4-4149-8876-A73816277BAA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FD9D1296-70DA-449B-BCFB-C3CB7D623635}
+	EndGlobalSection
+EndGlobal

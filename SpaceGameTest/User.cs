@@ -7,7 +7,8 @@ namespace SpaceGameUser
     {
         public string Name { get; private set; }
         public string LastName { get; private set; }
-        public string Title { get; private set; } = "Crew Member"; // Default value
+        public string Title { get; private set; } = "Crew Member";
+        public string Belong { get; private set; };
         public List<string> Professions { get; private set; }
         public int Rank { get; private set; }
         public int Health { get; set; }
@@ -19,12 +20,12 @@ namespace SpaceGameUser
         public int Speed { get; set; }
         public int Happiness { get; set; }
         public int Hunger { get; set; }
-        public int SleepLevel { get; set; } // Assume SleepLevel is from 0 to 100
-        public int CurrentLocation { get; set; } // Room Number
+        public int SleepLevel { get; set; }
+        public int CurrentLocation { get; set; }
         public int HungerDecreaser { get; private set; }
         public int SleepDecreaser { get; private set; }
         public string Status { get; private set; }
-        public int WorkLocation { get; private set; } // Work location (e.g., Engineering)
+        public int WorkLocation { get; private set; }
 
         private static int captainCount = 0;
         private static int headScientistCount = 0;
@@ -43,6 +44,7 @@ namespace SpaceGameUser
             Health = random.Next(50, 101);
             Stamina = random.Next(30, 100);
             PlaceOfOrigin = "Earth";
+            Belong = "Crew"; //makes sure you are part of the crew. different factions. different belong
             SpaceNeeded = "Small";
             Birthday = "01-01-2000";
             CombatStyle = "Balanced";
