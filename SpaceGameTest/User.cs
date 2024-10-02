@@ -8,7 +8,7 @@ namespace SpaceGameUser
         public string Name { get; private set; }
         public string LastName { get; private set; }
         public string Title { get; private set; } = "Crew Member";
-        public string Belong { get; private set; };
+        public string Belong { get; private set; }
         public List<string> Professions { get; private set; }
         public int Rank { get; private set; }
         public int Health { get; set; }

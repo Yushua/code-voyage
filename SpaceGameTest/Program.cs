@@ -6,38 +6,45 @@ using System.Windows.Forms;
 using SpaceGameUser;
 using SpaceGameShip;
 using SpaceGameRoom;
-using SpaceGameSystems;
+using universeCreate;
+using systemCreate;
 
 namespace SpaceGame
 {
     public class SpaceGame : Form
     {
-        static readonly int RealTimeStep = 2000;
+        static readonly int RealTimeStep = 1000;
         static int year = 0;
         static int month = 0;
         static int day = 0;
         static int hour = 0;
         static int minute = 0;
 
-        private Label displayLabel;
-        private System.Windows.Forms.Timer gameTimer;
+        bool engineStatus = false;
+        bool mapUpdate = false;
 
-        Ship ship;
-        List<User> users;
-        List<SpaceSystem> systems;
-        GameSetup gameSetup;
+        private Panel block1;
+        private Panel block2;
+        private Panel block3;
+        private Panel block4;
+
+        private System.Windows.Forms.Timer gameTimer;
+        private Ship ship;
+        private List<User> users;
+        private universeCreate.Universe universe;
+        private GameSetup gameSetup;
+        private char[,] universeMap = new char[61, 61];
+        private int mapWidth = 61;
+        private int mapHeight = 61;
+        private List<StarSystem> StarSystemList;
 
         public SpaceGame()
         {
             this.Text = "Space Game";
-            this.ClientSize = new System.Drawing.Size(800, 600);
+            this.ClientSize = new System.Drawing.Size(1900, 1000);
             this.BackColor = System.Drawing.Color.Black;
 
-            displayLabel = new Label();
-            displayLabel.ForeColor = System.Drawing.Color.White;
-            displayLabel.AutoSize = true;
-            displayLabel.Location = new System.Drawing.Point(10, 10);
-            this.Controls.Add(displayLabel);
+            InitializePanels();
 
             gameTimer = new System.Windows.Forms.Timer();
             gameTimer.Interval = RealTimeStep;
@@ -45,6 +52,27 @@ namespace SpaceGame
 
             gameSetup = new GameSetup();
             CreateNewGame();
+        }
+
+        private void InitializePanels()
+        {
+            block1 = CreatePanel(0, 0, 950, 500);
+            block2 = CreatePanel(950, 0, 950, 500);
+            block3 = CreatePanel(0, 500, 950, 500);
+            block4 = CreatePanel(950, 500, 950, 500);
+        }
+
+        private Panel CreatePanel(int x, int y, int width, int height)
+        {
+            Panel panel = new Panel
+            {
+                Location = new System.Drawing.Point(x, y),
+                Size = new System.Drawing.Size(width, height),
+                BackColor = System.Drawing.Color.Gray
+            };
+
+            this.Controls.Add(panel);
+            return panel;
         }
 
         [STAThread]
@@ -58,25 +86,31 @@ namespace SpaceGame
         {
             ship = new Ship("SS Voyager", 10);
             users = gameSetup.CreateCharacters(10, ship);
-            systems = gameSetup.CreateSystems(10);
+            universe = new universeCreate.Universe(10000, 10000, 100);
+            StarSystemList = new List<StarSystem>(); // Initialize the systems list
+            CreateStarSystemsList();
+            CreateUniverseMap();
+            DisplayMap();
+            DisplayListSystems();            
             gameTimer.Start();
         }
 
         private void OnGameTick(object sender, EventArgs e)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
-            try
-            {
-                ProcessGameTick(users, ship);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error occurred: {ex.Message}");
-            }
+            try { ProcessGameTick(users, ship); }
+            catch (Exception ex) { Console.WriteLine($"Error occurred: {ex.Message}"); }
 
-            gameSetup.UpdateAndDisplayGameTime(ref year, ref month, ref day, ref hour, ref minute, displayLabel);
-            UpdateDisplay();
+            UpdateAndDisplayGameTime(ref year, ref month, ref day, ref hour, ref minute, block1);
+            UpdateDisplayCrew();
 
+            if (mapUpdate)
+            {
+                CreateUniverseMap();
+                DisplayMap();
+                DisplayListSystems();
+                mapUpdate = false;
+            }
             stopwatch.Stop();
             int timeRemaining = RealTimeStep - (int)stopwatch.ElapsedMilliseconds;
             if (timeRemaining > 0)
@@ -134,7 +168,61 @@ namespace SpaceGame
             }
         }
 
-        void UpdateDisplay()
+        private void CreateStarSystemsList(){
+            StarSystemList.Clear();
+            int rangeX = mapWidth / 2;
+
+            int rangeY = mapHeight / 2;
+            
+            StarSystemList.Clear();
+
+
+            int shipX = ship.GetPositionX();
+            int shipY = ship.GetPositionY();
+
+            foreach (var system in universe.GetStarSystems())
+            {
+                if (system.PositionX >= shipX - rangeX && system.PositionX <= shipX + rangeX &&
+                    system.PositionY >= shipY - rangeY && system.PositionY <= shipY + rangeY)
+                {
+                    StarSystemList.Add(system);
+                }
+            }
+        }
+
+        private void CreateUniverseMap()
+        {
+            for (int x = 0; x < mapWidth; x++)
+            {
+                for (int y = 0; y < mapHeight; y++)
+                {
+                    universeMap[x, y] = ' '; 
+                }
+            }
+
+            int shipX = mapWidth / 2;
+            int shipY = mapHeight / 2;
+            //now make sure the unexplored is done
+            
+            //then place the ship location
+            //then place the universe locations
+            universeMap[shipX, shipY] = 'S';
+
+            //now check the list. if there are no systems you can just go and move to the next.
+            //you can also ask the system to give you the closest system
+        }
+
+        public void MoveShip(int deltaX, int deltaY)
+        {
+            //move the ship
+            /*
+                1. it moves until its there
+                2/ it pauses
+                3/ the ship is destroyed
+            */
+        }
+
+        void UpdateDisplayCrew()
         {
             string userInfoHeader = $"{"Name",-20} {"LastName",-20} {"Title",-24} {"Hunger",10} {"SleepLevel",12} {"CurrentLocation",15} {"Status",15}\n";
             string userInfo = "";
@@ -142,7 +230,99 @@ namespace SpaceGame
             {
                 userInfo += $"{user.Name,-20} {user.LastName,-20} {user.Title,-24} {user.Hunger,10} {user.SleepLevel,12} {user.CurrentLocation,15} {user.Status,15}\n";
             }
-            displayLabel.Text = $"Year: {year}, Month: {month}, Day: {day}, Hour: {hour}, Minute: {minute}\n\n" + userInfoHeader + userInfo;
+
+            block1.Controls.Clear();
+
+            Label crewDisplay = new Label
+            {
+                ForeColor = System.Drawing.Color.White,
+                BackColor = System.Drawing.Color.Transparent,
+                AutoSize = true,
+                Location = new System.Drawing.Point(10, 10),
+                Text = $"Year: {year}, Month: {month}, Day: {day}, Hour: {hour}, Minute: {minute}\n\n" + userInfoHeader + userInfo
+            };
+
+            block1.Controls.Add(crewDisplay);
+            block1.Refresh();
+        }
+
+       void DisplayMap()
+        {
+            block3.Controls.Clear();
+            string mapDisplay = "";
+
+            for (int y = 0; y < mapHeight; y++)
+            {
+                for (int x = 0; x < mapWidth; x++)
+                {
+                    mapDisplay += $"{universeMap[x, y]} ";
+                }
+                mapDisplay += "\n";
+            }
+
+            // Create a label to display the map
+            Label mapLabel = new Label
+            {
+                ForeColor = System.Drawing.Color.White,
+                BackColor = System.Drawing.Color.Transparent,
+                AutoSize = false,
+                Size = new System.Drawing.Size(900, 500),
+                Location = new System.Drawing.Point(10, 10),
+                Text = mapDisplay,
+                Font = new System.Drawing.Font("Courier New", 8),
+                TextAlign = System.Drawing.ContentAlignment.TopLeft
+            };
+
+            block3.Controls.Add(mapLabel);
+            block3.Refresh();
+
+        }
+
+        void DisplayListSystems(){
+            block4.Controls.Clear();
+            string systemsDisplay = StarSystemList.Count > 0 ? "Systems Found:\n" : "No systems found.\n";
+            foreach (var system in StarSystemList)
+            {
+                systemsDisplay += $"System Name: {system.Name}, Coordinates: ({system.PositionX}, {system.PositionY})\n";
+            }
+
+            Label systemsLabel = new Label
+            {
+                ForeColor = System.Drawing.Color.White,
+                BackColor = System.Drawing.Color.Transparent,
+                AutoSize = true,
+                Location = new System.Drawing.Point(10, 10),
+                Text = systemsDisplay
+            };
+
+            block4.Controls.Add(systemsLabel);
+            block4.Refresh();
+        }
+
+        public void UpdateAndDisplayGameTime(ref int year, ref int month, ref int day, ref int hour, ref int minute, Panel displayPanel)
+        {
+            minute += 5;
+
+            if (minute >= 60)
+            {
+                minute = 0;
+                hour++;
+            }
+            if (hour >= 24)
+            {
+                hour = 0;
+                day++;
+            }
+            if (day >= 30)
+            {
+                day = 0;
+                month++;
+            }
+            if (month >= 12)
+            {
+                month = 0;
+                year++;
+            }
         }
     }
 }

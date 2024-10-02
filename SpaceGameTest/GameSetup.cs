@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using SpaceGameUser;
 using SpaceGameShip;
-using SpaceGameSystems;
 using System.Windows.Forms;
 using SpaceGameRoom;
 
@@ -18,7 +17,7 @@ namespace SpaceGame
             {
                 string name = $"UserFirstName{i}";
                 string lastName = $"UserLastName{i}";
-                Room userRoom = ship.Rooms[roomIndex++];
+                Room userRoom = ship.GetRoom(roomIndex++);
                 User newUser = new User(name, lastName, numberOfCrew, userRoom.RoomNumber);
 
                 switch (newUser.Title)
@@ -41,45 +40,7 @@ namespace SpaceGame
 
             return users;
         }
-
-        public List<SpaceSystem> CreateSystems(int systemSize)
-        {
-            List<SpaceSystem> systems = new List<SpaceSystem>();
-
-            for (int i = 0; i < systemSize; i++)
-            {
-                string systemName = $"System-{i + 1}";
-                SpaceSystem newSystem = new SpaceSystem(systemName, 100, 100);
-                systems.Add(newSystem);
-            }
-
-            return systems;
-        }
-
-        public void UpdateAndDisplayGameTime(ref int year, ref int month, ref int day, ref int hour, ref int minute, Label displayLabel)
-        {
-            minute += 10;
-
-            if (minute >= 60)
-            {
-                minute = 0;
-                hour++;
-            }
-            if (hour >= 24)
-            {
-                hour = 0;
-                day++;
-            }
-            if (day >= 30)
-            {
-                day = 0;
-                month++;
-            }
-            if (month >= 12)
-            {
-                month = 0;
-                year++;
-            }
-        }
     }
+
+    
 }
