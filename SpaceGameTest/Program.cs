@@ -11,8 +11,8 @@ using systemCreate;
 
 namespace SpaceGame
 {
-    public class SpaceGame : Form
-    {
+        public class SpaceGame : Form
+        {
         static readonly int RealTimeStep = 1000;
         static int year = 0;
         static int month = 0;
@@ -27,6 +27,7 @@ namespace SpaceGame
         private Panel block2;
         private Panel block3;
         private Panel block4;
+        private Panel block5; // New panel for the full-size map
 
         private System.Windows.Forms.Timer gameTimer;
         private Ship ship;
@@ -37,11 +38,12 @@ namespace SpaceGame
         private int mapWidth = 61;
         private int mapHeight = 61;
         private List<StarSystem> StarSystemList;
-
+        int mapX = 0;
+        int mapy = 0;
         public SpaceGame()
         {
             this.Text = "Space Game";
-            this.ClientSize = new System.Drawing.Size(1900, 1000);
+            this.ClientSize = new System.Drawing.Size(3800, 1000);
             this.BackColor = System.Drawing.Color.Black;
 
             InitializePanels();
@@ -56,10 +58,12 @@ namespace SpaceGame
 
         private void InitializePanels()
         {
-            block1 = CreatePanel(0, 0, 950, 400);
-            block2 = CreatePanel(950, 0, 950, 400);
-            block3 = CreatePanel(0, 400, 950, 700);
-            block4 = CreatePanel(950, 400, 950, 700);
+            // Left side panels (2x2 grid)
+            block1 = CreatePanel(0, 0, 950, 300);
+            block2 = CreatePanel(950, 0, 950, 300);
+            block3 = CreatePanel(0, 300, 950, 700);
+            block4 = CreatePanel(950, 300, 950, 700);
+            block5 = CreatePanel(1915, 0, 1915, 1000);
         }
 
         private Panel CreatePanel(int x, int y, int width, int height)
@@ -87,7 +91,7 @@ namespace SpaceGame
             ship = new Ship("SS Voyager", 10);
             users = gameSetup.CreateCharacters(10, ship);
             universe = new universeCreate.Universe(10000, 10000);
-            StarSystemList = new List<StarSystem>(); // Initialize the systems list
+            StarSystemList = new List<StarSystem>();
             CreateStarSystemsList();
             CreateUniverseMap();
             DisplayMap();
@@ -106,6 +110,9 @@ namespace SpaceGame
 
             if (mapUpdate)
             {
+                //first set map begin and end
+                //then make sure this display ebgin and end have one thing. to assure where to place the markers on the map.
+                
                 CreateUniverseMap();
                 DisplayMap();
                 DisplayListSystems();
@@ -190,14 +197,10 @@ namespace SpaceGame
         {
             for (int y = 0; y < mapHeight; y++)
             {
-                universeMap[0, y] = '[';
-
-                for (int x = 1; x < mapWidth - 1; x++)
+                for (int x = 0; x < mapWidth; x++)
                 {
                     universeMap[x, y] = ' ';
                 }
-
-                universeMap[mapWidth - 1, y] = ']';
             }
 
             int shipX = mapWidth / 2;
@@ -214,8 +217,6 @@ namespace SpaceGame
                     universeMap[systemX, systemY] = 'B';
                 }
             }
-
-            // Additional logic for marking unexplored areas or anything else can go here
         }
 
         public void MoveShip(int deltaX, int deltaY)
@@ -252,18 +253,22 @@ namespace SpaceGame
             block1.Refresh();
         }
 
-       void DisplayMap()
+        void DisplayMap()
         {
-            block3.Controls.Clear();
+            block5.Controls.Clear(); // Use block5 for the map display
+
             string mapDisplay = "";
 
             for (int y = 0; y < mapHeight; y++)
             {
+                // Displaying the y-coordinate with padding, and adding brackets around the map row
+                mapDisplay += $"{y.ToString().PadLeft(2, '0')} [ ";
+
                 for (int x = 0; x < mapWidth; x++)
                 {
                     mapDisplay += $"{universeMap[x, y]} ";
                 }
-                mapDisplay += "\n";
+                mapDisplay += "]\n"; // Close the row
             }
 
             Label mapLabel = new Label
@@ -271,21 +276,25 @@ namespace SpaceGame
                 ForeColor = System.Drawing.Color.White,
                 BackColor = System.Drawing.Color.Transparent,
                 AutoSize = false,
-                Size = new System.Drawing.Size(900, 500),
-                Location = new System.Drawing.Point(10, 10),
+                Size = new System.Drawing.Size(1900, block5.Height), // Adjust size for block5
                 Text = mapDisplay,
                 Font = new System.Drawing.Font("Courier New", 8),
                 TextAlign = System.Drawing.ContentAlignment.TopLeft
             };
 
-            block3.Controls.Add(mapLabel);
-            block3.Refresh();
+            mapLabel.Height = mapLabel.PreferredHeight; // Set the label height dynamically based on content
 
+            block5.Controls.Add(mapLabel);
+            block5.AutoScroll = true; // Enable scrolling if content overflows
+            block5.Refresh();
         }
-
-        void DisplayListSystems(){
+        void DisplayListSystems()
+        {
             block4.Controls.Clear();
-            string systemsDisplay = StarSystemList.Count > 0 ? $"Systems Found: {StarSystemList.Count}\n" : "No systems found.\n";
+            string systemsDisplay = StarSystemList.Count > 0 
+                ? $"Systems Found: {StarSystemList.Count}\n" 
+                : "No systems found.\n";
+
             foreach (var system in StarSystemList.Take(20))
             {
                 systemsDisplay += $"System Name: {system.Name}, Coordinates: ({system.PositionX}, {system.PositionY}), Planets: {system.GetPlanetSize()}\n";
@@ -295,12 +304,23 @@ namespace SpaceGame
             {
                 ForeColor = System.Drawing.Color.White,
                 BackColor = System.Drawing.Color.Transparent,
-                AutoSize = true,
-                Location = new System.Drawing.Point(10, 10),
-                Text = systemsDisplay
+                AutoSize = true,  // Allow the label to auto-size based on content
+                Location = new System.Drawing.Point(0, 0), // Position at the top-left corner of block4
+                Text = systemsDisplay,
+                Font = new System.Drawing.Font("Courier New", 8),
+                TextAlign = System.Drawing.ContentAlignment.TopLeft // Align text to top-left
             };
 
-            block4.Controls.Add(systemsLabel);
+            Panel containerPanel = new Panel
+            {
+                AutoScroll = true, // Enable scrolling for the container panel
+                Location = new System.Drawing.Point(0, 0),
+                Size = block4.Size, // Make sure the container panel matches the size of block4
+                BackColor = System.Drawing.Color.Transparent // Transparent to blend with the parent panel
+            };
+
+            containerPanel.Controls.Add(systemsLabel);
+            block4.Controls.Add(containerPanel);
             block4.Refresh();
         }
 
