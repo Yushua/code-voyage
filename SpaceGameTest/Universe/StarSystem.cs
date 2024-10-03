@@ -33,6 +33,11 @@ namespace systemCreate
             return new List<Planet>(planets);
         }
 
+        public int GetPlanetSize()
+        {
+            return planets.Count;
+        }
+
         public void GeneratePlanets()
         {
             int planetCount = random.Next(0, 13);

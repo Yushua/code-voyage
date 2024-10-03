@@ -56,10 +56,10 @@ namespace SpaceGame
 
         private void InitializePanels()
         {
-            block1 = CreatePanel(0, 0, 950, 500);
-            block2 = CreatePanel(950, 0, 950, 500);
-            block3 = CreatePanel(0, 500, 950, 500);
-            block4 = CreatePanel(950, 500, 950, 500);
+            block1 = CreatePanel(0, 0, 950, 400);
+            block2 = CreatePanel(950, 0, 950, 400);
+            block3 = CreatePanel(0, 400, 950, 700);
+            block4 = CreatePanel(950, 400, 950, 700);
         }
 
         private Panel CreatePanel(int x, int y, int width, int height)
@@ -86,7 +86,7 @@ namespace SpaceGame
         {
             ship = new Ship("SS Voyager", 10);
             users = gameSetup.CreateCharacters(10, ship);
-            universe = new universeCreate.Universe(10000, 10000, 100);
+            universe = new universeCreate.Universe(10000, 10000);
             StarSystemList = new List<StarSystem>(); // Initialize the systems list
             CreateStarSystemsList();
             CreateUniverseMap();
@@ -171,11 +171,7 @@ namespace SpaceGame
         private void CreateStarSystemsList(){
             StarSystemList.Clear();
             int rangeX = mapWidth / 2;
-
             int rangeY = mapHeight / 2;
-            
-            StarSystemList.Clear();
-
 
             int shipX = ship.GetPositionX();
             int shipY = ship.GetPositionY();
@@ -192,24 +188,34 @@ namespace SpaceGame
 
         private void CreateUniverseMap()
         {
-            for (int x = 0; x < mapWidth; x++)
+            for (int y = 0; y < mapHeight; y++)
             {
-                for (int y = 0; y < mapHeight; y++)
+                universeMap[0, y] = '[';
+
+                for (int x = 1; x < mapWidth - 1; x++)
                 {
-                    universeMap[x, y] = ' '; 
+                    universeMap[x, y] = ' ';
                 }
+
+                universeMap[mapWidth - 1, y] = ']';
             }
 
             int shipX = mapWidth / 2;
             int shipY = mapHeight / 2;
-            //now make sure the unexplored is done
-            
-            //then place the ship location
-            //then place the universe locations
             universeMap[shipX, shipY] = 'S';
 
-            //now check the list. if there are no systems you can just go and move to the next.
-            //you can also ask the system to give you the closest system
+            foreach (var system in StarSystemList)
+            {
+                int systemX = (int)system.PositionX;
+                int systemY = (int)system.PositionY;
+
+                if (systemX >= 0 && systemX < mapWidth && systemY >= 0 && systemY < mapHeight)
+                {
+                    universeMap[systemX, systemY] = 'B';
+                }
+            }
+
+            // Additional logic for marking unexplored areas or anything else can go here
         }
 
         public void MoveShip(int deltaX, int deltaY)
@@ -260,7 +266,6 @@ namespace SpaceGame
                 mapDisplay += "\n";
             }
 
-            // Create a label to display the map
             Label mapLabel = new Label
             {
                 ForeColor = System.Drawing.Color.White,
@@ -280,10 +285,10 @@ namespace SpaceGame
 
         void DisplayListSystems(){
             block4.Controls.Clear();
-            string systemsDisplay = StarSystemList.Count > 0 ? "Systems Found:\n" : "No systems found.\n";
-            foreach (var system in StarSystemList)
+            string systemsDisplay = StarSystemList.Count > 0 ? $"Systems Found: {StarSystemList.Count}\n" : "No systems found.\n";
+            foreach (var system in StarSystemList.Take(20))
             {
-                systemsDisplay += $"System Name: {system.Name}, Coordinates: ({system.PositionX}, {system.PositionY})\n";
+                systemsDisplay += $"System Name: {system.Name}, Coordinates: ({system.PositionX}, {system.PositionY}), Planets: {system.GetPlanetSize()}\n";
             }
 
             Label systemsLabel = new Label

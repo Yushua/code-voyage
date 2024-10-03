@@ -7,23 +7,45 @@ namespace universeCreate
     {
         private List<systemCreate.StarSystem> StarSystems;
 
-        public Universe(int xSize, int ySize, int sizeStarSystems)
+        public Universe(int xSize, int ySize)
         {
             StarSystems = new List<systemCreate.StarSystem>();
-            GenerateStarSystems(xSize, ySize, sizeStarSystems);
+            GenerateStarSystems(xSize, ySize);
         }
 
-        private void GenerateStarSystems(int xSize, int ySize, int sizeStarSystems)
+    private void GenerateStarSystems(int Width, int Height)
+    {
+        Random random = new Random();
+        HashSet<(int, int)> existingCoordinates = new HashSet<(int, int)>();
+        int n = 0;
+        for (int x = 0; x < Width; x += 50)
         {
-            Random random = new Random();
-            for (int i = 0; i < sizeStarSystems; i++)
+            for (int y = 0; y < Height; y += 50)
             {
-                Vector2 position = new Vector2(random.Next(0, xSize), random.Next(0, ySize));
-                systemCreate.StarSystem newSystem = new systemCreate.StarSystem(position, $"Name {i}");
-                newSystem.GeneratePlanets();
-                StarSystems.Add(newSystem);
+                int systemsInChunk = random.Next(1, 21);
+
+                for (int i = 0; i < systemsInChunk; i++)
+                {
+                    int systemX, systemY;
+
+                    do
+                    {
+                        systemX = random.Next(x, x + 50);
+                        systemY = random.Next(y, y + 50);
+                    } while (existingCoordinates.Contains((systemX, systemY)));
+
+                    existingCoordinates.Add((systemX, systemY));
+
+                    var position = new Vector2(systemX, systemY);
+                    systemCreate.StarSystem newSystem = new systemCreate.StarSystem(position, $"{n}Name {i}");
+                    newSystem.GeneratePlanets();
+
+                    StarSystems.Add(newSystem);
+                }
+                n++;
             }
         }
+    }
 
         public void AddSystem(systemCreate.StarSystem system)
         {
