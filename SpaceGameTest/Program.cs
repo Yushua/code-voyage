@@ -34,9 +34,9 @@ namespace SpaceGame
         private List<User> users;
         private universeCreate.Universe universe;
         private GameSetup gameSetup;
-        private char[,] universeMap = new char[61, 61];
-        private int mapWidth = 61;
-        private int mapHeight = 61;
+        private char[,] universeMap = new char[51, 51];
+        private int mapWidth = 51;
+        private int mapHeight = 51;
         private List<StarSystem> StarSystemList;
         int mapX = 0;
         int mapy = 0;
@@ -59,10 +59,10 @@ namespace SpaceGame
         private void InitializePanels()
         {
             // Left side panels (2x2 grid)
-            block1 = CreatePanel(0, 0, 950, 300);
-            block2 = CreatePanel(950, 0, 950, 300);
-            block3 = CreatePanel(0, 300, 950, 700);
-            block4 = CreatePanel(950, 300, 950, 700);
+            block1 = CreatePanel(0, 0, 950, 500);
+            block2 = CreatePanel(950, 0, 950, 500);
+            block3 = CreatePanel(0, 500, 950, 500);
+            block4 = CreatePanel(950, 500, 950, 500);
             block5 = CreatePanel(1915, 0, 1915, 1000);
         }
 
